@@ -11,16 +11,5 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_CONNECTION")
-}
-
-model User {
-  id      Int      @id @default(autoincrement())
-  name    String
-}
-
-model Room {
-  id      Int     @id @default(autoincrement())
-  code    String  
-  members Int
+  url      = env("DATABASE_URL")
 }
