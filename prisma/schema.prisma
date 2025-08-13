@@ -16,17 +16,28 @@ datasource db {
 
 
 model User {
-  id      Int     @id @default(autoincrement())
-  name    String
-  rooms   Room[]
+  id        Int     @id @default(autoincrement())
+  name      String
+  rooms     Room[]
+  messages  Message[]
 
   @@map("users")
 }
 
 model Room {
   id      Int       @id @default(autoincrement())
-  uuid    String
+  uuid    String    @unique
   users   User[]    
 
   @@map("rooms")
+}
+
+
+model Message{
+  id      Int       @id @default(autoincrement())
+  uuid    Int       @unique
+  user    User      @relation(fields:[userId], references: [id])
+  userId  Int
+
+  @@map("messages")
 }
