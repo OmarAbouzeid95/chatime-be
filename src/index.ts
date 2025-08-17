@@ -1,7 +1,6 @@
 import express, { Router } from 'express';
 import dotenv from 'dotenv';
 import { PrismaClient } from '../generated/prisma/index.js';
-import HttpError from './classes/HttpError.js';
 
 import { userRouter } from './routers/userRouter.js';
 import { roomRouter } from './routers/roomRouter.js';

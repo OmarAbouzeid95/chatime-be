@@ -25,9 +25,10 @@ model User {
 }
 
 model Room {
-  id      Int       @id @default(autoincrement())
-  uuid    String    @unique
-  users   User[]    
+  id        Int       @id @default(autoincrement())
+  uuid      String    @unique
+  users     User[]   
+  messages  Message[]
 
   @@map("rooms")
 }
@@ -37,7 +38,9 @@ model Message{
   id      Int       @id @default(autoincrement())
   uuid    Int       @unique
   user    User      @relation(fields:[userId], references: [id])
+  room    Room      @relation(fields:[roomId], references: [id])
   userId  Int
+  roomId  Int
 
   @@map("messages")
 }
