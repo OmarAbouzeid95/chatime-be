@@ -2,22 +2,13 @@ import { Router } from 'express';
 import { prisma } from '../index.js';
 import { nanoid } from 'nanoid';
 import HttpError from '../classes/HttpError.js';
+import { findRoom, findUser } from '../prisma/helpers.js';
 
 export const roomRouter: Router = Router();
 
 roomRouter.post('/create', async (req, res) => {
 	const { userId } = req.body ?? {};
-	const user = await prisma.user.findFirst({
-		where: {
-			id: {
-				equals: userId,
-			},
-		},
-	});
-
-	if (!user) {
-		throw new HttpError(`User with id: ${userId} doesn't exist`, 400);
-	}
+	const user = await findUser(userId);
 
 	const room = await prisma.room.create({
 		data: {
@@ -36,32 +27,9 @@ roomRouter.post('/create', async (req, res) => {
 
 roomRouter.post('/join', async (req, res) => {
 	const { userId, roomId } = req.body ?? {};
-	const user = await prisma.user.findFirst({
-		where: {
-			id: {
-				equals: userId,
-			},
-		},
-	});
+	const user = await findUser(userId);
 
-	if (!user) {
-		throw new HttpError(`User with id: ${userId} doesn't exist`, 400);
-	}
-
-	const room = await prisma.room.findFirst({
-		where: {
-			uuid: {
-				equals: roomId,
-			},
-		},
-		select: {
-			uuid: true,
-			users: true,
-		},
-	});
-	if (!room) {
-		throw new HttpError(`Room with id: ${roomId} doesn't exist`, 400);
-	}
+	const room = await findRoom(roomId);
 
 	if (room.users.length >= 2) {
 		throw new HttpError(`This room is already full.`, 401);
