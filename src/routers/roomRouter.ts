@@ -3,6 +3,7 @@ import { prisma } from '../index.js';
 import { nanoid } from 'nanoid';
 import HttpError from '../classes/HttpError.js';
 import { findRoom, findUser } from '../prisma/helpers.js';
+import type { User } from '../../generated/prisma/index.js';
 
 export const roomRouter: Router = Router();
 
@@ -14,7 +15,7 @@ roomRouter.post('/create', async (req, res) => {
 		data: {
 			uuid: nanoid(10),
 			users: {
-				connect: [user],
+				connect: [user as User],
 			},
 		},
 		select: {

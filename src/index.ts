@@ -7,6 +7,7 @@ import { PrismaClient } from '../generated/prisma/index.js';
 
 import { userRouter } from './routers/userRouter.js';
 import { roomRouter } from './routers/roomRouter.js';
+import { messageRouter } from './routers/messageRouter.js';
 import { errorHandler } from './errorHandler.js';
 
 dotenv.config();
@@ -29,6 +30,7 @@ app.use(
 
 app.use('/users', userRouter);
 app.use('/rooms', roomRouter);
+app.use('/messages', messageRouter);
 
 app.use(errorHandler);
 
