@@ -8,9 +8,12 @@ import type { User } from '../../generated/prisma/index.js';
 export const roomRouter: Router = Router();
 
 roomRouter.post('/create', async (req, res) => {
-	const { userId } = req.body ?? {};
-	const user = await findUser(userId);
+	const { name } = req.body ?? {};
+	if (!name) {
+		throw new HttpError('User name is missing.', 400);
+	}
 
+	const user = await prisma.user.create({ data: { name } });
 	const room = await prisma.room.create({
 		data: {
 			uuid: nanoid(10),
@@ -23,13 +26,16 @@ roomRouter.post('/create', async (req, res) => {
 		},
 	});
 
-	res.status(201).json(room);
+	res.status(201).json({ user, room });
 });
 
 roomRouter.post('/join', async (req, res) => {
-	const { userId, roomId } = req.body ?? {};
-	const user = await findUser(userId);
+	const { name, roomId } = req.body ?? {};
+	if (!name) {
+		throw new HttpError('User name is missing.', 400);
+	}
 
+	const user = await prisma.user.create({ data: { name } });
 	const room = await findRoom(roomId);
 
 	if (room.users.length >= 2) {
@@ -47,5 +53,5 @@ roomRouter.post('/join', async (req, res) => {
 		},
 	});
 
-	res.status(200).send();
+	res.status(200).json({ user, room });
 });

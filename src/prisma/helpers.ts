@@ -44,7 +44,7 @@ export const findRoom = async <
 	});
 
 	if (!room) {
-		throw new HttpError(`Room with id: ${roomId} doesn't exist`, 400);
+		throw new HttpError(`Room code "${roomId}" doesn't exist`, 400);
 	}
 
 	return room;
