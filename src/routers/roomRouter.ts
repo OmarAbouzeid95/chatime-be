@@ -36,7 +36,7 @@ roomRouter.post('/join', async (req, res) => {
 	}
 
 	const user = await prisma.user.create({ data: { name } });
-	const room = await findRoom(roomId);
+	const room = await findRoom(roomId, { users: true });
 
 	if (room.users.length >= 2) {
 		throw new HttpError(`This room is already full.`, 401);
