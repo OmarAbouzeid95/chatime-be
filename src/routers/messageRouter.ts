@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { io } from '../index.js';
 import { prisma } from '../index.js';
 import { nanoid } from 'nanoid';
-import { findRoom, findUser } from '../prisma/helpers.js';
+import { findUser } from '../prisma/helpers.js';
 import HttpError from '../classes/HttpError.js';
 import type { Room, User } from '../../generated/prisma/index.js';
 
@@ -15,7 +15,26 @@ messageRouter.post('/send/:roomId', async (req, res) => {
 	if (!roomId || !userId) {
 		throw new HttpError('Missing roomId or userId.', 400);
 	}
-	const room = await findRoom(roomId);
+
+	const room = await prisma.room.findFirst({
+		where: {
+			uuid: {
+				equals: roomId,
+			},
+			users: {
+				some: {
+					id: userId,
+				},
+			},
+		},
+	});
+
+	if (!room) {
+		throw new HttpError(
+			`User with ID: ${userId} is not part of this chat`,
+			400
+		);
+	}
 	const user = await findUser(userId);
 
 	const createdMessage = await prisma.message.create({
@@ -31,6 +50,16 @@ messageRouter.post('/send/:roomId', async (req, res) => {
 		},
 		omit: {
 			id: true,
+			roomId: true,
+			userId: true,
+			updatedAt: true,
+		},
+		include: {
+			user: {
+				select: {
+					name: true,
+				},
+			},
 		},
 	});
 
