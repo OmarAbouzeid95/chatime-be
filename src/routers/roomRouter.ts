@@ -55,3 +55,23 @@ roomRouter.post('/join', async (req, res) => {
 
 	res.status(200).json({ user, room });
 });
+
+roomRouter.post('/join/:roomId', async (req, res) => {
+	const { userId } = req.body ?? {};
+	const { roomId } = req.params;
+	if (!userId || !roomId) {
+		throw new HttpError('Bad request.', 400);
+	}
+
+	const user = await findUser(userId);
+	const room = await findRoom(roomId, { users: true });
+
+	if (!room.users.find((user) => user.id === userId)) {
+		throw new HttpError(
+			`User with ID: ${userId} is not part of this room`,
+			400
+		);
+	}
+
+	res.status(200).json({ user, room });
+});
