@@ -108,6 +108,9 @@ messageRouter.get('/:roomId', async (req, res) => {
 		include: {
 			user: true,
 		},
+		orderBy: {
+			createdAt: 'desc',
+		},
 	});
 
 	res.status(200).json(messages);
